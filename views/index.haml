@@ -1,0 +1,43 @@
+!!! XML
+!!!
+%html
+    %head
+        %title eeven | A simple way to split and share bills
+        %link{:href => 'reset.css', :rel => 'stylesheet', :type => 'text/css'}
+        %link{:href => 'main.css', :rel => 'stylesheet', :type => 'text/css'}
+        %script{:type=>"text/javascript",
+                :src=>"js/mootools.js"}
+        %script{:type=>"text/javascript",:src=>"js/moomore.js"} 
+        %script{:type=>"text/javascript",:src=>"js/Meio.Autocomplete.js"}      
+        %script{:type=>"text/javascript",:src=>"js/main.js"}
+    %body
+        #container
+            #top
+                %img{:src=>'images/logo.png'}
+                #tagline A simple way to split expenses equally
+            #header
+                %h2 Share this Link
+        
+            #mainCol
+                %br
+                - 10.times do |i|
+                    - if i < 2
+                        %input{:type=>'text',:class=>"name",:value=>i} paid $
+                        %input{:type=>'text',:class=>"amount money",:value=> (i+1) *10 }
+                        for
+                        %input{:type=>'text',:id=>"for[#{i}]"} 
+                    - if i >= 2
+                        %input{:type=>'text',:class=>"name"} paid $
+                        %input{:type=>'text',:class=>"amount money"}
+                        for
+                        %input{:type=>'text',:id=>"for[#{i}]"}       
+                
+                %button#calculate Calculate
+            #drawer
+                This is the Drawer
+        #footer
+            Hello This is a footer
+                
+
+
+                    

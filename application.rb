@@ -19,5 +19,9 @@ end
 
 # root page
 get '/' do
-  haml :root
+  haml :index
+end
+
+get '/main.css' do
+  sass :'/stylesheets/main'
 end
