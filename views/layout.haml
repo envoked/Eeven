@@ -1,14 +1,18 @@
+!!! XML
 !!!
 %html
-  %head
-    %title= @title || SiteConfig.title
-    %link{:href => '/main.css', :rel => 'stylesheet', :type => 'text/css'}
-  %body
-    #container
-      #header
-        #logo
-          %h1
-            %a{:href => '/'}= SiteConfig.title
-      #content= yield
-      #footer
-        %p#legal= "&mdash; &copy; #{Time.now.strftime('%Y')} #{SiteConfig.author} &mdash;"
+    %head
+        %title eeven | A simple way to split and share bills
+        %link{:href => '/css/reset.css', :rel => 'stylesheet', :type => 'text/css'}
+        %link{:href => '/css/main.css', :rel => 'stylesheet', :type => 'text/css'}
+        %script{:type=>"text/javascript",:src=>"/js/mootools.js"}
+        %script{:type=>"text/javascript",:src=>"/js/moomore.js"} 
+        %script{:type=>"text/javascript",:src=>"/js/main.js"}
+    %body
+        #container
+            =yield
+        #footer
+            Hello This is a footer
+                
+
+

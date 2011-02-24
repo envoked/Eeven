@@ -20,8 +20,28 @@ end
 # root page
 get '/' do
   haml :index
+  
+  
 end
 
-get '/main.css' do
+get '/split/save' do
+  
+end
+
+post '/split/save' do
+  matrix = JSON.parse(params[:data])
+  if matrix.has_key? 'Error'
+     puts 'Error'
+  else
+    puts matrix.inspect
+  end 
+end
+
+
+
+
+
+
+get '/css/main.css' do
   sass :'/stylesheets/main'
 end

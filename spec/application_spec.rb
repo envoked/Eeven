@@ -13,6 +13,6 @@ describe 'main application' do
   end
 
   specify 'should have more specs' do
-    pending
+    
   end
 end
