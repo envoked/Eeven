@@ -7,17 +7,10 @@
 #mainCol
     %br
     - 3.times do |i|
-        - if i < 2
-            %input{:type=>'text',:class=>"name",:value=>i} paid $
-            %input{:type=>'text',:class=>"amount money",:value=> (i+1) *10 }
-            for
-            %input{:type=>'text',:id=>"for[#{i}]"} 
-        - if i >= 2
-            %input{:type=>'text',:class=>"name"} paid $
-            %input{:type=>'text',:class=>"amount money"}
-            for
-            %input{:type=>'text',:id=>"for[#{i}]"}       
-    
+        %input{:type=>'text',:id=>"name_#{i}",:class=>"name",:value=>i} paid $
+        %input{:type=>'text',:id=>"amount_#{i}",:class=>"amount money",:value=> (i+1) *10 }
+        for
+        %input{:type=>'text',:id=>"memo_#{i}"}
     %button#calculate Calculate
 #drawer
     This is the Drawer

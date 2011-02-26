@@ -7,96 +7,118 @@ window.addEvent('domready', function(){
 		// $("drawer").tween('margin-left',-15);
 		var i = 0;
 		
+		//get a list of all the bills
+		var bills=[];
+		var i = 0;
+		while($("name_"+ i)){
+			bills[i]={
+				'name': $("name_" + i).get('value'),
+				'amount': $("amount_" + i).get('value').toInt(), 
+				'memo': $("memo_" + i).get('value')		
+			}
+			i++; //we don't want any infinite loops
+		}
 		
-		var matrix = {};
 		
 		
+		var debts = new Hash({});
+		//get unique names
+		var names = bills.map(function(bill,index)
+			{return bill['name'];
+			});
 		
-		var names = $$(".name").map(function(el,index){
-						return el.get('value');
-					}).filter(function(item,index){
-						return item != 0 //ignore any possible blank lines
-					});
+		
+		bills.each(function(bill,index){
+			var eachOwes = Number.from(bill['amount'] / names.length).round();
+			names.each(function(ower,index){
+			    //you can't owe yourself money
+				if(ower != bill['name']){
+					debts[ower] = debts[ower] == undefined ? new Hash({}) : debts[ower];
 					
-		var amounts = $$(".amount").map(function(el,index){
-						return el.get('value').toInt();
-					}).filter(function(item,index){
-						return item > 0 //ignore any possible blank lines
-					});
-		
-		//create owing matrix matrix
-		names.unique().each(function(ower,index){
-			matrix[ower] = {};
-			names.each(function(collector,i){
-				// you can't owe money to yourself
-				if(ower!=collector){
-					matrix[ower][collector] = {'amount': 0, 'paid': false};
-				}
-				
-			});
-		});
-   	
-		//iterate through all amounts and calculate who owes who and how much
-		amounts.each(function(amount,index){
-			Object.each(matrix,function(value,key){
-				if(key != names[index]){ // you don't owe money to yourself
-					eachOwes = Number.from(amount / Object.getLength(matrix)).round();
-					matrix[key][names[index]]['amount'] += eachOwes;
-				}
-			});
-			
-		});
-		
-		//simple calculations
-		Object.each(matrix,function(payees,ower){
+					if(debts[ower][bill['name']] != undefined){
+						debts[ower][bill['name']]['amount'] += eachOwes;
+					}else{
+						debts[ower][bill['name']]= new Hash({'amount': eachOwes,'paid': false});
+					}
+				} 
+			});			
+		});		
+		Object.each(debts,function(payees,ower){
 			Object.each(payees,function(debt,payee){
-				if(debt['amount'] > 0 && matrix[ower][payee] >= matrix[payee][ower] ){
-						matrix[ower][payee]['amount']-= matrix[payee][ower]['amount'];
-						matrix[payee][ower]['amount'] = 0 ;
+				if(debt['amount'] > 0 && debts[ower][payee] >= debts[payee][ower] ){
+						debts[ower][payee]['amount']-= debts[payee][ower]['amount'];
+						debts[payee][ower]['amount'] = 0 ;
 				}		
 			});
 		});
-		
-		//remove any empty entries 
-		Object.each(matrix,function(payees,ower){
-			matrix[ower] = Object.filter(payees,function(debt,key){
+		   
+		//remove any empty entries
+		Object.each(debts,function(payees,ower){
+			debts[ower] = Object.filter(payees,function(debt,key){
 				return debt['amount'].toInt() > 0;
 			});
-		});    
-
+		});  
 		
-		//remove any people who don't owe anyone
-		matrix = Object.filter(matrix,function(payees,key){
+		debts = Object.filter(debts,function(payees,key){
 			return Object.getLength(payees) > 0;
 		}); 
+		
+		console.log(debts);
+		
+		
+		
+		
 
-		
-				
-		var list = new Element('ul',{'class':'sum'});
-		Object.each(matrix,function(payees,ower){
-			var li = new Element('li',{'class':'person','html': ower});
-			var payeeUL = new Element('ul');
-			  	    
-			Object.each(payees,function(debt,payee){
-				var pLi = new Element('li',{'html': payee + ": $" + debt['amount']});
-				pLi.inject(payeeUL);
-			});
-			
-			payeeUL.inject(li);
-			li.inject(list);
-		});
-		$("drawer").empty();
-		list.inject($("drawer"));
-		//send the request
-		var request = new Request.JSON({
-			url: '/split/save',
-			data:'data=' + JSON.encode(matrix),
-			complete:function(){
-				console.log("Posted");
-			}
-		});
-		
-		request.send();
+		// //simple calculations
+		// Object.each(debts,function(payees,ower){
+		// 	Object.each(payees,function(debt,payee){
+		// 		if(debt['amount'] > 0 && debts[ower][payee] >= debts[payee][ower] ){
+		// 				debts[ower][payee]['amount']-= debts[payee][ower]['amount'];
+		// 				debts[payee][ower]['amount'] = 0 ;
+		// 		}		
+		// 	});
+		// });
+		// 
+		// //remove any empty entries 
+		// Object.each(debts,function(payees,ower){
+		// 	debts[ower] = Object.filter(payees,function(debt,key){
+		// 		return debt['amount'].toInt() > 0;
+		// 	});
+		// });    
+		// 
+		// 
+		// //remove any people who don't owe anyone
+		// debts = Object.filter(debts,function(payees,key){
+		// 	return Object.getLength(payees) > 0;
+		// }); 
+		// 
+		// 
+		// 		
+		// var list = new Element('ul',{'class':'sum'});
+		// Object.each(debts,function(payees,ower){
+		// 	var li = new Element('li',{'class':'person','html': ower});
+		// 	var payeeUL = new Element('ul');
+		// 	  	    
+		// 	Object.each(payees,function(debt,payee){
+		// 		var pLi = new Element('li',{'html': payee + ": $" + debt['amount']});
+		// 		pLi.inject(payeeUL);
+		// 	});
+		// 	
+		// 	payeeUL.inject(li);
+		// 	li.inject(list);
+		// });
+		// $("drawer").empty();
+		// list.inject($("drawer"));
+		// //send the request
+		// var request = new Request.JSON({
+		// 	url: '/split/save',
+		// 	data:'data=' + JSON.encode(debts),
+		// 	complete:function(){
+		// 		console.log("Posted");
+		// 	}
+		// });
+		// 
+		// request.send(); 
 		
 		
   	});
