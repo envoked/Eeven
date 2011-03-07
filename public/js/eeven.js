@@ -1,4 +1,5 @@
 var Eeven = new Class({
+    Binds:["lastListener"],
 
 	initialize: function(el){
 		//initialize ish
@@ -11,9 +12,7 @@ var Eeven = new Class({
 		
 	},
 	
-	load:function(){
-		
-	},
+
 	
 	createElements: function(){
 		for(var i = 0; i < 2; i++){
@@ -37,6 +36,9 @@ var Eeven = new Class({
 											});
     	var rowContainer = new Element('div',{'class': 'row'});
 
+		//add events for amount Field
+	   	this.addAmountEvents(amountField);
+
         nameField.inject(rowContainer);
 		rowContainer.appendText(" paid $");
 		amountField.inject(rowContainer);
@@ -47,15 +49,44 @@ var Eeven = new Class({
 	},
 	
 	addLastListener: function(){
-		$("name_" + (this.numRows - 1)).addEvent('blur',this.lastListener.bind(this));
+		$("name_" + (this.numRows - 1)).addEvent('blur',this.lastListener);
 	},
 	
 	lastListener: function(event){
 		if(event.target.get("value") == "") return;
-		event.target.removeEvent(this.lastListener);
 		console.log(event.target.id);
-		this.createRow(1);
+		this.createRow();
 		this.addLastListener();		
-	}                                                                                  
+	},
+	
+	addAmountEvents: function(el){
+		el.addEvent("blur",function(event){
+			var val = Number.from(this.get("value"))==null ? 0 : Number.from(this.get("value"));
+			this.set("value",val);
+			// if name is blank on current row, use the name of the previous payer if possible
+
+		
+		});
+		
+	},
+	
+	getElementNum: function(el){
+		var split = el.get("id").split("_");
+		return split[split.length - 1];
+	}
+	
+	calculate: function(){
+		
+	},
+	
+	save: function(){
+		
+	},
+	
+	load: function(){
+		
+	}
+	
+	                                                                                  
 	
 });
