@@ -19,13 +19,24 @@ end
 
 # root page
 get '/' do
-  haml :index
-  
-  
+  alphanumerics = [('0'..'9'),('A'..'Z'),('a'..'z')].map {|range| range.to_a}.flatten
+  id = (0...10).map { alphanumerics[Kernel.rand(alphanumerics.size)] }.join
+  redirect "/split/#{id}" 
 end
 
-get '/split/save' do
-  
+get '/bill/:id' do
+  @id = params[:id]
+  haml :split
+end
+
+get '/split/:id' do
+  @id = params[:id]   
+  haml :split
+end
+
+get '/split/get/:id' do
+  @split = Split.get(params[:id])
+  @split.data.to_json
 end
 
 post '/split/save' do
@@ -33,8 +44,10 @@ post '/split/save' do
   if matrix.has_key? 'Error'
      puts 'Error'
   else
-    puts matrix.inspect
-  end 
+    split = Split.create({:id=>matrix['id'],:data=> matrix})
+    puts "AA #{split.valid?}" 
+  end
+   
 end
 
 

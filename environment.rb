@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'dm-core'
+require 'dm-types'
 require 'dm-redis-adapter'
 require 'dm-timestamps'
 require 'dm-validations'
