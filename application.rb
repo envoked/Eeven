@@ -45,9 +45,16 @@ post '/split/save' do
      puts 'Error'
   else
     split = Split.create({:id=>matrix['id'],:data=> matrix})
-    puts "AA #{split.valid?}" 
   end
    
+end
+
+get '/split/isActive/:id' do
+  key = "eeven:#{params[:id]}"
+  inactive = MEMCACHE.get(key) == request.ip
+  MEMCACHE.set(key, request.ip, 60)
+  return (!inactive).to_json
+  
 end
 
 
