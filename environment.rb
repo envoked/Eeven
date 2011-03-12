@@ -10,7 +10,7 @@ require 'dm-migrations'
 require 'haml'
 require 'ostruct'
 require 'json'
-require 'Dalli'
+require 'dalli'
 
 require 'sinatra' unless defined?(Sinatra)
 
