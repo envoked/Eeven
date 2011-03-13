@@ -20,6 +20,6 @@ configure do
   Dir.glob("#{File.dirname(__FILE__)}/lib/*.rb") { |lib| require File.basename(lib, '.*') }
   DataMapper.setup(:default, {:adapter  => "redis"})
   # Memcache
-  MEMCACHE = Dalli::Client.new('127.0.0.1:11211',:expires_in=> 60)
+  MEMCACHE = Dalli::Client.new('localhost:11211',:expires_in=> 60)
   
 end
