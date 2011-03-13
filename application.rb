@@ -51,9 +51,9 @@ end
 
 get '/split/isActive/:id' do
   key = "eeven:#{params[:id]}"
-  inactive = MEMCACHE.get(key) == request.ip
+  active = MEMCACHE.get(key) != request.ip
   MEMCACHE.set(key, request.ip, 60)
-  return (!inactive).to_json
+  return active.to_s
   
 end
 
