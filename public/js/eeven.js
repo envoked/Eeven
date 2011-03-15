@@ -57,7 +57,8 @@ var Eeven = new Class({
 		rowContainer.appendText(" for ");
 		memoField.inject(rowContainer);
 		deleteButton.inject(rowContainer);   
-		rowContainer.inject(this.container);
+		rowContainer.inject(this.container)
+		return rowContainer;
 	},
 	
 	addLastListener: function(){
@@ -167,7 +168,6 @@ var Eeven = new Class({
 	},
 	
 	load: function(){
-		console.log("loading ish");
 		var request = new Request.JSON({
 			url: '/split/get/' + this.splitId,
 			method: 'get',
@@ -183,14 +183,13 @@ var Eeven = new Class({
 	},
 	
 	refreshBills: function(){
+	    console.log(this.bills);
 		this.bills.each(function(bill,index){
-			//make sure there's enough rows available
-			if($("name_" + index) == undefined) this.createRow();
-			
-			$("name_" + index).set('value',bill['name']);
-			$("amount_" + index).set('value',bill['amount']);
-			$("memo_" + index).set('value',bill['memo']);
-			
+		    var i = index +1;
+            if($("name_" + i) == undefined) this.createRow();  
+            $("name_" + i).set('value',bill['name']);
+            $("amount_" + i).set('value',bill['amount']);
+            $("memo_" + i).set('value',bill['memo']);   
 			}.bind(this));
 	},
 	
