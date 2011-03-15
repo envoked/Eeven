@@ -25,15 +25,27 @@ var Eeven = new Class({
 	    this.lastIndex++; 		
 		var nameField = new Element('input',{	'class':'name',
 											 	'type': 'text',
-											    'id': "name_" + this.lastIndex	
+											    'id': "name_" + this.lastIndex,
+											    'data-id': this.lastIndex,
+											    events:{
+											        change: this.sync.bind(this) 
+											    }	
 											});
 		var amountField = new Element('input',{	'class':'amount money',
 											 	'type': 'text',
-											    'id': "amount_" + this.lastIndex 
+											    'id': "amount_" + this.lastIndex,
+											    'data-id': this.lastIndex, 
+											    events:{
+											        change: this.sync.bind(this) 
+											    } 
 											});
 		var memoField = new Element('input',{	'class':'memo',
 											 	'type': 'text',
-											    'id': "memo_" + this.lastIndex 
+											    'id': "memo_" + this.lastIndex,
+											    'data-id': this.lastIndex, 
+											    events:{
+											        change: this.sync.bind(this) 
+											    } 
 						 	
 											});
 		var deleteButton = new Element('a',{	'class':'memo',
@@ -41,7 +53,7 @@ var Eeven = new Class({
 										 	'html' : "Delete",
 											'data-id': this.lastIndex,
 											events:{
-												click: this.deleteRow.bind(this)
+												click: this.deleteRow.bind(this),
 											}
 
 										});   										
@@ -62,7 +74,6 @@ var Eeven = new Class({
 	},
 	
 	addLastListener: function(){
-		console.log(this.lastIndex);
 		$("name_" + this.lastIndex).addEvent('blur',this.lastListener);
 	},
 	
@@ -88,6 +99,7 @@ var Eeven = new Class({
 		$("row_" + rowId).destroy();
 		this.bills = null;
 		this.debts = null;
+		this.createRow();
 		this.addLastListener();
 		this.calculate();
 	},
@@ -145,9 +157,7 @@ var Eeven = new Class({
 		}); 
 		
 		console.log(this.debts);
-		this.showResults();
-		this.save();
-				
+		this.showResults();				
 		
 	},
 	
@@ -171,7 +181,7 @@ var Eeven = new Class({
 		var request = new Request.JSON({
 			url: '/split/get/' + this.splitId,
 			method: 'get',
-			delay: 5000,
+			delay: 1000,
 			onComplete:function(split){
 				this.bills = split['bills'];
 				this.debts = split['debts'];
@@ -179,7 +189,7 @@ var Eeven = new Class({
 				this.showResults();
 			}.bind(this)
 		});
-		request.get();		
+		request.startTimer();		
 	},
 	
 	refreshBills: function(){
@@ -191,6 +201,8 @@ var Eeven = new Class({
             $("amount_" + i).set('value',bill['amount']);
             $("memo_" + i).set('value',bill['memo']);   
 			}.bind(this));
+		
+		this.addLastListener();
 	},
 	
 	
@@ -231,8 +243,12 @@ var Eeven = new Class({
 		//send the request
 	},
 	
-	sync: function(){
-	    
+	sync: function(event){
+	    var rowId = event.target.get("data-id");
+	    if($("amount_" + rowId).get("value") >= 0){
+	        this.calculate();
+	        this.save();
+	    }
 	}
   
 });
