@@ -1,3 +1,11 @@
+/*
+  name :    Eeven
+  author :  Adrian Wisernig
+  
+
+
+
+*/
 var Eeven = new Class({
     Binds:["lastListener"],
 
@@ -9,7 +17,22 @@ var Eeven = new Class({
 		this.debts ={};
 		this.lastIndex = 0;
 		this.createElements();
-		this.addLastListener();
+		this.addLastListener();  
+    	this.poll = new Request.JSON({
+    		url: '/split/get/' + this.splitId,
+    		method: 'get',
+    		delay: 2000,
+    		initialDelay: 2000,
+    		onComplete:function(split){
+    			this.bills = split['bills'];
+    			this.debts = split['debts'];
+    			this.refreshBills();
+    			this.showResults();
+    		}.bind(this)
+    	});
+    	this.focusedField = undefined;
+    	
+        this.poll.startTimer(); 
 		
 	},
 	
@@ -20,7 +43,11 @@ var Eeven = new Class({
 			this.createRow();
 		}
 	},
+	/*
+	  creates a new row, adds the appropriate events and adds it to the DOM
 	
+	
+	*/
 	createRow: function(){ 
 	    this.lastIndex++; 		
 		var nameField = new Element('input',{	'class':'name',
@@ -28,7 +55,10 @@ var Eeven = new Class({
 											    'id': "name_" + this.lastIndex,
 											    'data-id': this.lastIndex,
 											    events:{
-											        change: this.sync.bind(this) 
+											        change: this.sync.bind(this),
+											        focus:  this.makeActive.bind(this),
+											        blur:   this.makeInActive.bind(this)
+											        
 											    }	
 											});
 		var amountField = new Element('input',{	'class':'amount money',
@@ -36,7 +66,10 @@ var Eeven = new Class({
 											    'id': "amount_" + this.lastIndex,
 											    'data-id': this.lastIndex, 
 											    events:{
-											        change: this.sync.bind(this) 
+											        change: this.sync.bind(this),
+                                                    focus:  this.makeActive.bind(this),
+											        blur:   this.makeInActive.bind(this)
+											         
 											    } 
 											});
 		var memoField = new Element('input',{	'class':'memo',
@@ -44,7 +77,9 @@ var Eeven = new Class({
 											    'id': "memo_" + this.lastIndex,
 											    'data-id': this.lastIndex, 
 											    events:{
-											        change: this.sync.bind(this) 
+											        change: this.sync.bind(this),
+                                                    focus:  this.makeActive.bind(this),
+											        blur:   this.makeInActive.bind(this)
 											    } 
 						 	
 											});
@@ -54,11 +89,69 @@ var Eeven = new Class({
 											'data-id': this.lastIndex,
 											events:{
 												click: this.deleteRow.bind(this),
+                                                focus:  this.makeActive.bind(this),
+										        blur:   this.makeInActive.bind(this)
+										        
 											}
 
 										});   										
 										  
     	var rowContainer = new Element('div',{'class': 'row','id': 'row_' + this.lastIndex});
+
+		//add events for amount Field
+	   	this.addAmountEvents(amountField);
+
+        nameField.inject(rowContainer);
+		rowContainer.appendText(" paid $");
+		amountField.inject(rowContainer);
+		rowContainer.appendText(" for ");
+		memoField.inject(rowContainer);
+		deleteButton.inject(rowContainer);   
+		rowContainer.inject(this.container)
+		return rowContainer;
+	},
+	createRowId: function(id){  	
+		var nameField = new Element('input',{	'class':'name',
+											 	'type': 'text',
+											    events:{
+											        change: this.sync.bind(this),
+											        focus:  this.makeActive.bind(this),
+											        blur:   this.makeInActive.bind(this)
+											        
+											    }	
+											});
+		var amountField = new Element('input',{	'class':'amount money',
+											 	'type': 'text',
+											    'id': "amount_" + id,
+											    events:{
+											        change: this.sync.bind(this),
+                                                    focus:  this.makeActive.bind(this),
+											        blur:   this.makeInActive.bind(this)
+											         
+											    } 
+											});
+		var memoField = new Element('input',{	'class':'memo',
+											 	'type': 'text',
+											    events:{
+											        change: this.sync.bind(this),
+                                                    focus:  this.makeActive.bind(this),
+											        blur:   this.makeInActive.bind(this)
+											    } 
+						 	
+											});
+		var deleteButton = new Element('a',{	'class':'memo',
+										 	    'type': 'text',
+										 	    'html' : "Delete",
+											events:{
+												click: this.deleteRow.bind(this),
+                                                focus:  this.makeActive.bind(this),
+										        blur:   this.makeInActive.bind(this)
+										        
+											}
+
+										});   										
+										  
+    	var rowContainer = new Element('div',{'class': 'row'});
 
 		//add events for amount Field
 	   	this.addAmountEvents(amountField);
@@ -99,15 +192,12 @@ var Eeven = new Class({
 		$("row_" + rowId).destroy();
 		this.bills = null;
 		this.debts = null;
+		this.calculate();
+		this.save();
 		this.createRow();
 		this.addLastListener();
-		this.calculate();
 	},
 	
-	getElementNum: function(el){
-		var split = el.get("id").split("_");
-		return split[split.length - 1];
-	},
 	
 	calculate: function(){
 		this.makeBills();
@@ -116,7 +206,6 @@ var Eeven = new Class({
 		var names = this.bills.map(function(bill,index)
 			{return bill['name'];
 			}).unique();
-		console.log("Names:" + names.length);
 		this.bills.each(function(bill,index){
 			var eachOwes = Number.from(bill['amount'] / names.length).round();
 			names.each(function(ower,index){
@@ -156,9 +245,16 @@ var Eeven = new Class({
 			return Object.getLength(payees) > 0 && key != undefined;
 		}); 
 		
-		console.log(this.debts);
 		this.showResults();				
 		
+	},
+	
+	makeActive: function(event){
+	    this.focusedField = event.target;
+	},
+	
+	makeInActive: function(event){
+	    this.focusedField = undefined;
 	},
 	
 	save: function(){
@@ -169,37 +265,38 @@ var Eeven = new Class({
 		var request = new Request.JSON({
 			url: '/split/save',
 			data:'data=' + JSON.encode(bill),
-			complete:function(){
-				console.log("Posted");
-			}
+			onComplete:function(){
+				 this.poll.startTimer();//
+			}.bind(this)
 		});     
 		console.log(bill);
-		request.send();		
+		request.send();
+		this.poll.stopTimer();		
 	},
 	
 	load: function(){
-		var request = new Request.JSON({
-			url: '/split/get/' + this.splitId,
-			method: 'get',
-			delay: 1000,
-			onComplete:function(split){
-				this.bills = split['bills'];
-				this.debts = split['debts'];
-				this.refreshBills();
-				this.showResults();
-			}.bind(this)
-		});
-		request.startTimer();		
+		this.poll.startTimer();		
 	},
 	
 	refreshBills: function(){
 	    console.log(this.bills);
 		this.bills.each(function(bill,index){
 		    var i = index +1;
-            if($("name_" + i) == undefined) this.createRow();  
-            $("name_" + i).set('value',bill['name']);
-            $("amount_" + i).set('value',bill['amount']);
-            $("memo_" + i).set('value',bill['memo']);   
+            if($("name_" + i) == undefined){
+                this.createRowId(i);     
+            }
+            
+            Object.each(bill,function(value,fieldName){
+                if($(fieldName + "_" + i) && $(fieldName + "_" + i) != this.focusedField){
+                    $(fieldName + "_" + i).set('value', value);
+                }
+            }.bind(this));
+            
+             
+            // $("name_" + i).set('value',bill['name']);
+            // $("amount_" + i).set('value',bill['amount']);
+            // $("memo_" + i).set('value',bill['memo']);   
+			
 			}.bind(this));
 		
 		this.addLastListener();
@@ -240,7 +337,6 @@ var Eeven = new Class({
 		}.bind(this));
 		$("drawer").empty();
 		list.inject($("drawer"));
-		//send the request
 	},
 	
 	sync: function(event){
