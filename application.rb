@@ -36,7 +36,8 @@ end
 
 get '/split/get/:id' do
   @split = Split.get(params[:id])
-  @split.data.to_json
+  puts @split.data
+  @split.data.to_json unless @split.nil?
 end
 
 post '/split/save' do
@@ -44,6 +45,7 @@ post '/split/save' do
   if matrix.has_key? 'Error'
      puts 'Error'
   else
+    puts matrix
     split = Split.create({:id=>matrix['id'],:data=> matrix})
   end
    

@@ -15,19 +15,22 @@ var Eeven = new Class({
 		this.splitId = id;
 		this.bills = [];
 		this.debts ={};
-		this.lastIndex = 0;
 		this.createElements();
 		this.addLastListener();  
     	this.poll = new Request.JSON({
     		url: '/split/get/' + this.splitId,
     		method: 'get',
-    		delay: 2000,
+    		delay: 1000,
     		initialDelay: 2000,
     		onComplete:function(split){
-    			this.bills = split['bills'];
-    			this.debts = split['debts'];
-    			this.refreshBills();
-    			this.showResults();
+    		    if(split && split['bills'] && split['debts']){
+    		        console.log("Loading...");
+    		        console.log(split);
+    		    	this.bills = split['bills'];
+        			this.debts = split['debts'];
+        			this.refreshBills();
+        			this.showResults();   
+    		    }
     		}.bind(this)
     	});
     	this.focusedField = undefined;
@@ -49,11 +52,8 @@ var Eeven = new Class({
 	
 	*/
 	createRow: function(){ 
-	    this.lastIndex++; 		
 		var nameField = new Element('input',{	'class':'name',
 											 	'type': 'text',
-											    'id': "name_" + this.lastIndex,
-											    'data-id': this.lastIndex,
 											    events:{
 											        change: this.sync.bind(this),
 											        focus:  this.makeActive.bind(this),
@@ -62,9 +62,7 @@ var Eeven = new Class({
 											    }	
 											});
 		var amountField = new Element('input',{	'class':'amount money',
-											 	'type': 'text',
-											    'id': "amount_" + this.lastIndex,
-											    'data-id': this.lastIndex, 
+											 	'type': 'text', 
 											    events:{
 											        change: this.sync.bind(this),
                                                     focus:  this.makeActive.bind(this),
@@ -74,8 +72,6 @@ var Eeven = new Class({
 											});
 		var memoField = new Element('input',{	'class':'memo',
 											 	'type': 'text',
-											    'id': "memo_" + this.lastIndex,
-											    'data-id': this.lastIndex, 
 											    events:{
 											        change: this.sync.bind(this),
                                                     focus:  this.makeActive.bind(this),
@@ -83,65 +79,10 @@ var Eeven = new Class({
 											    } 
 						 	
 											});
-		var deleteButton = new Element('a',{	'class':'memo',
+		var deleteButton = new Element('a',{	
+		                                    'class':'memo',
 										 	'type': 'text',
 										 	'html' : "Delete",
-											'data-id': this.lastIndex,
-											events:{
-												click: this.deleteRow.bind(this),
-                                                focus:  this.makeActive.bind(this),
-										        blur:   this.makeInActive.bind(this)
-										        
-											}
-
-										});   										
-										  
-    	var rowContainer = new Element('div',{'class': 'row','id': 'row_' + this.lastIndex});
-
-		//add events for amount Field
-	   	this.addAmountEvents(amountField);
-
-        nameField.inject(rowContainer);
-		rowContainer.appendText(" paid $");
-		amountField.inject(rowContainer);
-		rowContainer.appendText(" for ");
-		memoField.inject(rowContainer);
-		deleteButton.inject(rowContainer);   
-		rowContainer.inject(this.container)
-		return rowContainer;
-	},
-	createRowId: function(id){  	
-		var nameField = new Element('input',{	'class':'name',
-											 	'type': 'text',
-											    events:{
-											        change: this.sync.bind(this),
-											        focus:  this.makeActive.bind(this),
-											        blur:   this.makeInActive.bind(this)
-											        
-											    }	
-											});
-		var amountField = new Element('input',{	'class':'amount money',
-											 	'type': 'text',
-											    'id': "amount_" + id,
-											    events:{
-											        change: this.sync.bind(this),
-                                                    focus:  this.makeActive.bind(this),
-											        blur:   this.makeInActive.bind(this)
-											         
-											    } 
-											});
-		var memoField = new Element('input',{	'class':'memo',
-											 	'type': 'text',
-											    events:{
-											        change: this.sync.bind(this),
-                                                    focus:  this.makeActive.bind(this),
-											        blur:   this.makeInActive.bind(this)
-											    } 
-						 	
-											});
-		var deleteButton = new Element('a',{	'class':'memo',
-										 	    'type': 'text',
-										 	    'html' : "Delete",
 											events:{
 												click: this.deleteRow.bind(this),
                                                 focus:  this.makeActive.bind(this),
@@ -162,12 +103,12 @@ var Eeven = new Class({
 		rowContainer.appendText(" for ");
 		memoField.inject(rowContainer);
 		deleteButton.inject(rowContainer);   
-		rowContainer.inject(this.container)
+		rowContainer.inject(this.container);
 		return rowContainer;
 	},
 	
 	addLastListener: function(){
-		$("name_" + this.lastIndex).addEvent('blur',this.lastListener);
+	   this.container.getLast(".row").getElement(".name").addEvent('blur',this.lastListener);
 	},
 	
 	lastListener: function(event){
@@ -187,9 +128,7 @@ var Eeven = new Class({
 	},
 	
 	deleteRow:function(event){
-		var rowId = event.target.get("data-id");
-		console.log(this.bills);		
-		$("row_" + rowId).destroy();
+	    event.target.getParent(".row").destroy();
 		this.bills = null;
 		this.debts = null;
 		this.calculate();
@@ -207,7 +146,7 @@ var Eeven = new Class({
 			{return bill['name'];
 			}).unique();
 		this.bills.each(function(bill,index){
-			var eachOwes = Number.from(bill['amount'] / names.length).round();
+			var eachOwes = Number.from(bill['amount'] / names.length).round() || 0;
 			names.each(function(ower,index){
 			    //you can't owe yourself money
 				if(ower != bill['name']){
@@ -269,7 +208,8 @@ var Eeven = new Class({
 				 this.poll.startTimer();//
 			}.bind(this)
 		});     
-		console.log(bill);
+		console.log("Sending bills...");
+		console.log(this.bills);
 		request.send();
 		this.poll.stopTimer();		
 	},
@@ -279,46 +219,38 @@ var Eeven = new Class({
 	},
 	
 	refreshBills: function(){
-	    console.log(this.bills);
-		this.bills.each(function(bill,index){
-		    var i = index +1;
-            if($("name_" + i) == undefined){
-                this.createRowId(i);     
-            }
-            
-            Object.each(bill,function(value,fieldName){
-                if($(fieldName + "_" + i) && $(fieldName + "_" + i) != this.focusedField){
-                    $(fieldName + "_" + i).set('value', value);
-                }
-            }.bind(this));
-            
-             
-            // $("name_" + i).set('value',bill['name']);
-            // $("amount_" + i).set('value',bill['amount']);
-            // $("memo_" + i).set('value',bill['memo']);   
-			
-			}.bind(this));
-		
-		this.addLastListener();
+        this.bills.each(function(bill,index){
+                    row = this.container.getChildren(".row")[index];
+                    if(row == undefined){
+                        row = this.createRow();     
+                    }
+                    
+                    Object.each(bill,function(value,fieldName){
+                        if(row.getElement("." + fieldName) != this.focusedField){
+                            row.getElement("." + fieldName).set('value', value);
+                        }
+                    }.bind(this));
+                    
+         }.bind(this));
+        this.addLastListener();  
 	},
 	
 	
 	makeBills: function(){
 		this.bills = new Array();
-		console.log(this.bills);
-		
-		// create the bills data structure
-		for(var i = 0; i<= this.lastIndex; i++){
-			// make utility class to check whether a form is empty
-			if($("name_" + i) && $("name_" + i).get("value") !=""){
-				console.log("name_" + i + " exists");
-				this.bills.push({
-					'name': $("name_" + i).get('value'),
-					'amount': $("amount_" + i).get('value').toInt(), 
-					'memo': $("memo_" + i).get('value')		
-				});
-			} 
-		}
+		console.log(this.bills);		
+        this.container.getChildren(".row").each(function(row,index){
+            if(row.getElement(".amount").get("value").toInt() > 0){
+                console.log("hasBill:" + index);
+    			this.bills.push({
+    				'name': row.getElement(".name").get('value'),
+    				'amount': row.getElement(".amount").get('value').toInt(), 
+    				'memo': row.getElement(".memo").get('value') 	
+    			});  
+		    }
+        }.bind(this));
+        console.log("Bills:");
+        console.log(this.bills);
 	},
 	
 	showResults: function(){
@@ -340,8 +272,8 @@ var Eeven = new Class({
 	},
 	
 	sync: function(event){
-	    var rowId = event.target.get("data-id");
-	    if($("amount_" + rowId).get("value") >= 0){
+	    row = event.target.getParent(".row");
+	    if(row.getElement(".amount").get("value") >= 0){
 	        this.calculate();
 	        this.save();
 	    }
