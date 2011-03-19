@@ -36,7 +36,6 @@ end
 
 get '/split/get/:id' do
   @split = Split.get(params[:id])
-  puts @split.data
   @split.data.to_json unless @split.nil?
 end
 
