@@ -1,4 +1,6 @@
-= EEven base on the Sinatra Application Template
+= Eeven is an easy way for people to split expenses.
+
+= EEven is based the Sinatra Application Template
 
 A base Sinatra application template. Just fork and build. Yay!
 Includes Bundler, DataMapper, RSpec2, and Haml, all ready to go.
