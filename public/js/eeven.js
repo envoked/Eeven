@@ -36,7 +36,7 @@ var Eeven = new Class({
     		}.bind(this)
     	});
     	this.focusedField = undefined;
-    	
+      
     	this.activePoll = new Request({
     		url: '/split/isActive/' + this.splitId,
     		method: 'get',
@@ -82,8 +82,8 @@ var Eeven = new Class({
 											 	'type': 'text',
 											    events:{
 											        change: this.sync.bind(this),
-											        focus:  this.makeFieldActive.bind(this),
-											        blur:   this.makeFieldInActive.bind(this)
+											        focus:  this.getFocusField.bind(this),
+											        blur:   this.loseFieldFocus.bind(this)
 											        
 											    }	
 											});
@@ -91,8 +91,8 @@ var Eeven = new Class({
 											 	'type': 'text', 
 											    events:{
 											        change: this.sync.bind(this),
-                                                    focus:  this.makeFieldActive.bind(this),
-											        blur:   this.makeFieldInActive.bind(this)
+                                                    focus:  this.getFocusField.bind(this),
+											        blur:   this.loseFieldFocus.bind(this)
 											         
 											    } 
 											});
@@ -100,8 +100,8 @@ var Eeven = new Class({
 											 	'type': 'text',
 											    events:{
 											        change: this.sync.bind(this),
-                                                    focus:  this.makeFieldActive.bind(this),
-											        blur:   this.makeFieldInActive.bind(this)
+                                                    focus:  this.getFocusField.bind(this),
+											        blur:   this.loseFieldFocus.bind(this)
 											    } 
 						 	
 											});
@@ -111,8 +111,8 @@ var Eeven = new Class({
 										 	'html' : "Delete",
 											events:{
 												click: this.deleteRow.bind(this),
-                                                focus:  this.makeFieldActive.bind(this),
-										        blur:   this.makeFieldInActive.bind(this)
+                                                focus:  this.getFocusField.bind(this),
+										        blur:   this.loseFieldFocus.bind(this)
 										        
 											}
 
@@ -144,6 +144,10 @@ var Eeven = new Class({
 		this.addLastListener();		
 	},
 	
+	removeLastListener: function(){
+	     this.container.getLast(".row").getElement(".name").removeEvent('blur',this.lastListener);
+	},
+	
 	addAmountEvents: function(el){
 		el.addEvent("blur",function(event){
 			var val = Number.from(this.get("value"))==null ? 0 : Number.from(this.get("value"));
@@ -159,7 +163,6 @@ var Eeven = new Class({
 		this.debts = null;
 		this.calculate();
 		this.save();
-		this.createRow();
 		this.addLastListener();
 	},
 	
@@ -214,13 +217,15 @@ var Eeven = new Class({
 		
 	},
 	
-	makeFieldActive: function(event){
+	getFocusField: function(event){
 	    this.focusedField = event.target;
 	},
 	
-	makeFieldInActive: function(event){
+	loseFieldFocus: function(event){
 	    this.focusedField = undefined;
 	},
+	
+	
 	
 	save: function(){
 	   	var bill = {'id' : this.splitId,
@@ -241,7 +246,7 @@ var Eeven = new Class({
 	
 	refreshBills: function(){
         this.bills.each(function(bill,index){
-                    row = this.container.getChildren(".row")[index];
+                    row = this.container.getChildren(".row")[index]; // bad design
                     if(row == undefined){
                         row = this.createRow();     
                     }
@@ -253,7 +258,13 @@ var Eeven = new Class({
                     }.bind(this));
                     
          }.bind(this));
-        this.addLastListener();  
+         // add a blank row if needed
+         if(this.container.getLast(".row").getElement(".name").get("value") != ""){
+             this.removeLastListener();
+             this.createRow();
+         }
+         
+        this.addLastListener();
 	},
 	
 	
