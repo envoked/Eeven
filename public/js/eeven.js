@@ -17,6 +17,7 @@ var Eeven = new Class({
 		this.debts ={};
 		this.createElements();
 		this.addLastListener();
+		this.isActive = false;
 		
     	 
     	this.poll = new Request.JSON({
@@ -44,21 +45,22 @@ var Eeven = new Class({
     		onComplete: this.setSync
     	});
     	
-    	this.poll.startTimer();
     	this.activePoll.startTimer();
     	    			
 	},
 	
 	setSync: function(bool,responseXML){
-	    console.log(bool);
-        if(bool == "true"){
-            console.log("Start TImer...");
-            this.poll.startTimer();
-        }else{
-            console.log("Stop Timer...");
-            this.poll.stopTimer();
-            
-        }     
+	    this.isActive = bool == "true";     
+	},
+	
+	startUpdate: function(){
+	    if(this.isActive){
+	        this.poll.startTimer();
+	    }
+	},
+	
+	stopUpdate:function(){
+	    if(this.isActive) this.poll.stopTimer();
 	},
 	
 
@@ -78,8 +80,8 @@ var Eeven = new Class({
 											 	'type': 'text',
 											    events:{
 											        change: this.sync.bind(this),
-											        focus:  this.makeActive.bind(this),
-											        blur:   this.makeInActive.bind(this)
+											        focus:  this.makeFieldActive.bind(this),
+											        blur:   this.makeFieldInActive.bind(this)
 											        
 											    }	
 											});
@@ -87,8 +89,8 @@ var Eeven = new Class({
 											 	'type': 'text', 
 											    events:{
 											        change: this.sync.bind(this),
-                                                    focus:  this.makeActive.bind(this),
-											        blur:   this.makeInActive.bind(this)
+                                                    focus:  this.makeFieldActive.bind(this),
+											        blur:   this.makeFieldInActive.bind(this)
 											         
 											    } 
 											});
@@ -96,8 +98,8 @@ var Eeven = new Class({
 											 	'type': 'text',
 											    events:{
 											        change: this.sync.bind(this),
-                                                    focus:  this.makeActive.bind(this),
-											        blur:   this.makeInActive.bind(this)
+                                                    focus:  this.makeFieldActive.bind(this),
+											        blur:   this.makeFieldInActive.bind(this)
 											    } 
 						 	
 											});
@@ -107,8 +109,8 @@ var Eeven = new Class({
 										 	'html' : "Delete",
 											events:{
 												click: this.deleteRow.bind(this),
-                                                focus:  this.makeActive.bind(this),
-										        blur:   this.makeInActive.bind(this)
+                                                focus:  this.makeFieldActive.bind(this),
+										        blur:   this.makeFieldInActive.bind(this)
 										        
 											}
 
@@ -210,11 +212,11 @@ var Eeven = new Class({
 		
 	},
 	
-	makeActive: function(event){
+	makeFieldActive: function(event){
 	    this.focusedField = event.target;
 	},
 	
-	makeInActive: function(event){
+	makeFieldInActive: function(event){
 	    this.focusedField = undefined;
 	},
 	
@@ -227,18 +229,13 @@ var Eeven = new Class({
 			url: '/split/save',
 			data:'data=' + JSON.encode(bill),
 			onComplete:function(){
-				 this.poll.startTimer();
+				 this.startUpdate();
 			}.bind(this)
 		});     
-		console.log("Saving bills...");
-		console.log(this.bills);
-		this.poll.stopTimer();
+		this.stopUpdate();
 		request.send();		
 	},
 	
-	load: function(){
-		this.poll.startTimer();		
-	},
 	
 	refreshBills: function(){
         this.bills.each(function(bill,index){
