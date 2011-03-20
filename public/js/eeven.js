@@ -7,7 +7,7 @@
 
 */
 var Eeven = new Class({
-    Binds:["lastListener"],
+    Binds:["lastListener","setSync"],
 
 	initialize: function(el,id){
 		//initialize ish
@@ -16,7 +16,9 @@ var Eeven = new Class({
 		this.bills = [];
 		this.debts ={};
 		this.createElements();
-		this.addLastListener();  
+		this.addLastListener();
+		
+    	 
     	this.poll = new Request.JSON({
     		url: '/split/get/' + this.splitId,
     		method: 'get',
@@ -24,7 +26,6 @@ var Eeven = new Class({
     		initialDelay: 2000,
     		onComplete:function(split){
     		    if(split && split['bills'] && split['debts']){
-    		        console.log("Loading...");
     		        console.log(split);
     		    	this.bills = split['bills'];
         			this.debts = split['debts'];
@@ -35,8 +36,29 @@ var Eeven = new Class({
     	});
     	this.focusedField = undefined;
     	
-        this.poll.startTimer(); 
-		
+    	this.activePoll = new Request({
+    		url: '/split/isActive/' + this.splitId,
+    		method: 'get',
+    		delay: 10000,
+    		initialDelay: 100,
+    		onComplete: this.setSync
+    	});
+    	
+    	this.poll.startTimer();
+    	this.activePoll.startTimer();
+    	    			
+	},
+	
+	setSync: function(bool,responseXML){
+	    console.log(bool);
+        if(bool == "true"){
+            console.log("Start TImer...");
+            this.poll.startTimer();
+        }else{
+            console.log("Stop Timer...");
+            this.poll.stopTimer();
+            
+        }     
 	},
 	
 
@@ -205,13 +227,13 @@ var Eeven = new Class({
 			url: '/split/save',
 			data:'data=' + JSON.encode(bill),
 			onComplete:function(){
-				 this.poll.startTimer();//
+				 this.poll.startTimer();
 			}.bind(this)
 		});     
-		console.log("Sending bills...");
+		console.log("Saving bills...");
 		console.log(this.bills);
-		request.send();
-		this.poll.stopTimer();		
+		this.poll.stopTimer();
+		request.send();		
 	},
 	
 	load: function(){
@@ -241,7 +263,6 @@ var Eeven = new Class({
 		console.log(this.bills);		
         this.container.getChildren(".row").each(function(row,index){
             if(row.getElement(".amount").get("value").toInt() > 0){
-                console.log("hasBill:" + index);
     			this.bills.push({
     				'name': row.getElement(".name").get('value'),
     				'amount': row.getElement(".amount").get('value').toInt(), 
@@ -249,8 +270,6 @@ var Eeven = new Class({
     			});  
 		    }
         }.bind(this));
-        console.log("Bills:");
-        console.log(this.bills);
 	},
 	
 	showResults: function(){
