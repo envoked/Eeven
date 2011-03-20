@@ -17,7 +17,7 @@ var Eeven = new Class({
 		this.debts ={};
 		this.createElements();
 		this.addLastListener();
-		this.isActive = false;
+		this.isActive = true;
 		
     	 
     	this.poll = new Request.JSON({
@@ -44,7 +44,7 @@ var Eeven = new Class({
     		initialDelay: 100,
     		onComplete: this.setSync
     	});
-    	
+    	this.startUpdate();
     	this.activePoll.startTimer();
     	    			
 	},
