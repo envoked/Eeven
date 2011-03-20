@@ -12,14 +12,6 @@
 #drawer
 :javascript
     window.addEvent('domready', function(){
-      var eeven = new Eeven("mainCol","#{@id}");
-      $("calculate").addEvent('click',function(event){
-        eeven.calculate();
-      }); 
-      
-      $("lBut").addEvent('click',function(event){
-        eeven.load();
-        
-      })      
+      var eeven = new Eeven("mainCol","#{@id}");    
       
     });

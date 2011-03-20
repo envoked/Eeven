@@ -50,7 +50,9 @@ var Eeven = new Class({
 	},
 	
 	setSync: function(bool,responseXML){
-	    this.isActive = bool == "true";     
+	    
+	    this.isActive = bool == "true";
+        this.isActive ? this.poll.startTimer() : this.poll.stopTimer();
 	},
 	
 	startUpdate: function(){
