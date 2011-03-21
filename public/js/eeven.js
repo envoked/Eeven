@@ -165,8 +165,7 @@ var Eeven = new Class({
 		this.save();
 		this.addLastListener();
 	},
-	
-	
+
 	calculate: function(){
 		this.makeBills();
 		this.debts = {};
