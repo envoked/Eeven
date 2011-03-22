@@ -49,29 +49,49 @@ var Eeven = new Class({
     	    			
 	},
 	
+	
+	/*
+	  See if there are multiple clients viewing the split to start auto sync
+	
+	*/
 	setSync: function(bool,responseXML){
 	    
 	    this.isActive = bool == "true";
         this.isActive ? this.poll.startTimer() : this.poll.stopTimer();
 	},
 	
+	/*
+	  Start Autosync
+	
+	*/
+	
 	startUpdate: function(){
 	    if(this.isActive){
 	        this.poll.startTimer();
 	    }
 	},
+ 
 	
+	/*
+	  Stop Autosync
+	
+	*/  
 	stopUpdate:function(){
 	    if(this.isActive) this.poll.stopTimer();
 	},
 	
 
 	
+	/*
+		Start each new split with two empty rows
+	*/   
 	createElements: function(){
 		for(var i = 0; i < 2; i++){
 			this.createRow();
 		}
 	},
+	
+	
 	/*
 	  creates a new row, adds the appropriate events and adds it to the DOM
 	
@@ -133,6 +153,7 @@ var Eeven = new Class({
 		return rowContainer;
 	},
 	
+
 	addLastListener: function(){
 	   this.container.getLast(".row").getElement(".name").addEvent('blur',this.lastListener);
 	},
@@ -163,7 +184,7 @@ var Eeven = new Class({
 		this.debts = null;
 		this.calculate();
 		this.save();
-		this.addLastListener();
+		this.addLastListener();t
 	},
 
 	calculate: function(){
@@ -246,7 +267,7 @@ var Eeven = new Class({
 	refreshBills: function(){
         this.bills.each(function(bill,index){
                     row = this.container.getChildren(".row")[index]; // bad design
-                    if(row == undefined){
+                    if(!row){
                         row = this.createRow();     
                     }
                     
@@ -257,8 +278,13 @@ var Eeven = new Class({
                     }.bind(this));
                     
          }.bind(this));
+         
+         if(this.container.getChildren(".row").length > (Object.getLength(this.bills) + 1)){
+             this.container.getLast(".row").getPrevious(".row").destroy();
+         }         
+         
          // add a blank row if needed
-         if(this.container.getLast(".row").getElement(".name").get("value") != ""){
+         if(this.container.getChildren(".row").length < (Object.getLength(this.bills) + 1)){
              this.removeLastListener();
              this.createRow();
          }
