@@ -150,6 +150,9 @@ var Eeven = new Class({
 		memoField.inject(rowContainer);
 		deleteButton.inject(rowContainer);   
 		rowContainer.inject(this.container);
+		
+		//rowContainer.set('slide',{duration:400});
+		
 		return rowContainer;
 	},
 	
@@ -279,7 +282,7 @@ var Eeven = new Class({
                     
          }.bind(this));
          
-         if(this.container.getChildren(".row").length > (Object.getLength(this.bills) + 1)){
+         if(Object.getLength(this.bills) > 1 &&  this.container.getChildren(".row").length > (Object.getLength(this.bills) + 1)){
              this.container.getLast(".row").getPrevious(".row").destroy();
          }         
          
