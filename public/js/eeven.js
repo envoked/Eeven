@@ -282,7 +282,7 @@ var Eeven = new Class({
                     
          }.bind(this));
          
-         if(Object.getLength(this.bills) > 1 &&  this.container.getChildren(".row").length > (Object.getLength(this.bills) + 1)){
+         if(this.container.getChildren(".row").length > (Object.getLength(this.bills) + 1)){
              this.container.getLast(".row").getPrevious(".row").destroy();
          }         
          
