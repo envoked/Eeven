@@ -6,28 +6,32 @@
 var Eeven = new Class({
     Binds:["lastListener","setSync"],
 
-	initialize: function(el,id){
+	initialize: function(el,id,data){
 		//initialize ish 
 		this.container = $(el);
 		this.splitId = id;
 		this.bills = [];
 		this.debts ={};
-		this.createElements();
-		this.addLastListener();
+		
+		if(data != 'null'){
+		    this.load(data);
+		}else{
+		    this.createElements();
+    		this.addLastListener();
+		}
 		this.isActive = false;
 		this.focusedField = undefined;
     	
     	//create the Polls
     	 
     	this.poll = new Request.JSON({
-    		url: '/split/get/' + this.splitId,
+    		url: '/split/' + this.splitId,
     		method: 'get',
     		delay: 1000,
     		initialDelay: 2000,
     		
     		onComplete:function(split){
     		    if(split && split['bills'] && split['debts']){
-    		        console.log(split);
     		    	this.bills = split['bills'];
         			this.debts = split['debts'];
         			this.refreshBills();
@@ -43,9 +47,18 @@ var Eeven = new Class({
     		onComplete: this.setSync
     	});
              
-        this.startUpdate();
-        this.activePoll.startTimer();  
+        // this.startUpdate();
+        // this.activePoll.startTimer();  
     	    			
+	},
+	
+	load: function(split){
+	    var split = JSON.decode(split);
+	    console.log("split:");
+    	this.bills = split['bills'];
+		this.debts = split['debts'];
+		this.refreshBills();
+		this.showResults();	    
 	},
 	
 	
@@ -271,7 +284,7 @@ var Eeven = new Class({
 					'debts': this.debts};
 					 
 		var request = new Request.JSON({
-			url: '/split/save',
+			url: '/split/' + this.splitId,
 			data:'data=' + JSON.encode(bill),
 			onComplete:function(){
 				 this.startUpdate();

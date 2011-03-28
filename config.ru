@@ -1,4 +1,6 @@
 require File.join(File.dirname(__FILE__), 'application')
+require 'sass/plugin/rack'
+
 
 set :run, false
 set :environment, :production
@@ -8,4 +10,4 @@ log = File.new("log/sinatra.log", "a+")
 $stdout.reopen(log)
 $stderr.reopen(log)
 
-run Sinatra::Application
+run Eeven

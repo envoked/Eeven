@@ -11,6 +11,7 @@ require 'haml'
 require 'ostruct'
 require 'json'
 require 'dalli'
+require 'sinatra/respond_to' 
 
 require 'sinatra' unless defined?(Sinatra)
 
