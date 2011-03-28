@@ -19,7 +19,7 @@ var Eeven = new Class({
 		    this.createElements();
     		this.addLastListener();
 		}
-		this.isActive = false;
+		this.isActive = true;
 		this.focusedField = undefined;
     	
     	//create the Polls
@@ -47,8 +47,8 @@ var Eeven = new Class({
     		onComplete: this.setSync
     	});
              
-        // this.startUpdate();
-        // this.activePoll.startTimer();  
+        this.startUpdate();
+        this.activePoll.startTimer();  
     	    			
 	},
 	
