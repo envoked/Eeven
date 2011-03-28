@@ -1,30 +1,30 @@
 /*
   name :    Eeven
   author :  Adrian Wisernig
-  
-
-
-
+  description: The main class for the Eeven application. To use simply attach it to an element
 */
 var Eeven = new Class({
     Binds:["lastListener","setSync"],
 
 	initialize: function(el,id){
-		//initialize ish
+		//initialize ish 
 		this.container = $(el);
 		this.splitId = id;
 		this.bills = [];
 		this.debts ={};
 		this.createElements();
 		this.addLastListener();
-		this.isActive = true;
-		
+		this.isActive = false;
+		this.focusedField = undefined;
+    	
+    	//create the Polls
     	 
     	this.poll = new Request.JSON({
     		url: '/split/get/' + this.splitId,
     		method: 'get',
     		delay: 1000,
     		initialDelay: 2000,
+    		
     		onComplete:function(split){
     		    if(split && split['bills'] && split['debts']){
     		        console.log(split);
@@ -34,18 +34,17 @@ var Eeven = new Class({
         			this.showResults();   
     		    }
     		}.bind(this)
-    	});
-    	this.focusedField = undefined;
-      
+    	});      
     	this.activePoll = new Request({
     		url: '/split/isActive/' + this.splitId,
     		method: 'get',
     		delay: 10000,
-    		initialDelay: 100,
+    		initialDelay: 2000,
     		onComplete: this.setSync
     	});
-    	this.startUpdate();
-    	this.activePoll.startTimer();
+             
+        this.startUpdate();
+        this.activePoll.startTimer();  
     	    			
 	},
 	
@@ -56,7 +55,7 @@ var Eeven = new Class({
 	*/
 	setSync: function(bool,responseXML){
 	    
-	    this.isActive = bool == "true";
+	    this.isActive = (bool == "true");
         this.isActive ? this.poll.startTimer() : this.poll.stopTimer();
 	},
 	
@@ -126,7 +125,7 @@ var Eeven = new Class({
 						 	
 											});
 		var deleteButton = new Element('a',{	
-		                                    'class':'memo',
+		                                    'class':'deleteRow',
 										 	'type': 'text',
 										 	'html' : "Delete",
 											events:{
@@ -148,18 +147,24 @@ var Eeven = new Class({
 		amountField.inject(rowContainer);
 		rowContainer.appendText(" for ");
 		memoField.inject(rowContainer);
-		deleteButton.inject(rowContainer);   
-		rowContainer.inject(this.container);
-		
-		//rowContainer.set('slide',{duration:400});
-		
+		deleteButton.inject(rowContainer);
+		rowContainer.inject(this.container);  			
 		return rowContainer;
 	},
 	
+	/*
+	    add a listener on the last row
+	
+	*/
 
 	addLastListener: function(){
 	   this.container.getLast(".row").getElement(".name").addEvent('blur',this.lastListener);
 	},
+	
+	
+	/*
+	  if the last row isn't blank, add another one chap
+	*/
 	
 	lastListener: function(event){
 		if(event.target.get("value") == "") return;
@@ -167,6 +172,11 @@ var Eeven = new Class({
 		this.createRow();
 		this.addLastListener();		
 	},
+	
+	
+	/*
+	  Remove the listener from this last one
+	*/                                      
 	
 	removeLastListener: function(){
 	     this.container.getLast(".row").getElement(".name").removeEvent('blur',this.lastListener);
@@ -176,18 +186,23 @@ var Eeven = new Class({
 		el.addEvent("blur",function(event){
 			var val = Number.from(this.get("value"))==null ? 0 : Number.from(this.get("value"));
 			this.set("value",val);
-			// if name is blank on current row, use the name of the previous payer if possible
 		});
 		
 	},
 	
 	deleteRow:function(event){
-	    event.target.getParent(".row").destroy();
+	    var row = event.target.getParent(".row");
+	    
+	    row.set("slide",{duration:400,onComplete:function(){
+	     	        row.destroy();
+	    }});
+	    
+	    row.slide();
 		this.bills = null;
 		this.debts = null;
 		this.calculate();
 		this.save();
-		this.addLastListener();t
+		this.addLastListener();
 	},
 
 	calculate: function(){
@@ -311,21 +326,20 @@ var Eeven = new Class({
 	},
 	
 	showResults: function(){
-		var list = new Element('ul',{'class':'sum'});
-		Object.each(this.debts,function(payees,ower){
-			var li = new Element('li',{'class':'person','html': ower});
-			var payeeUL = new Element('ul');
-			  	    
-			Object.each(payees,function(debt,payee){
-				var pLi = new Element('li',{'html': payee + ": $" + debt['amount']});
-				pLi.inject(payeeUL);
-			});
-			
-			payeeUL.inject(li);
-			li.inject(list);
-		}.bind(this));
-		$("drawer").empty();
-		list.inject($("drawer"));
+        // var list = new Element('ul',{'class':'sum'});
+        // Object.each(this.debts,function(payees,ower){
+        //  var li = new Element('li',{'class':'person','html': ower});
+        //  var payeeUL = new Element('ul');
+        //          
+        //  Object.each(payees,function(debt,payee){
+        //      var pLi = new Element('li',{'html': payee + ": $" + debt['amount']});
+        //      pLi.inject(payeeUL);
+        //  });
+        //  
+        //  payeeUL.inject(li);
+        //  li.inject(list);
+        // }.bind(this));
+        // list.inject($("drawer")); 
 	},
 	
 	sync: function(event){
