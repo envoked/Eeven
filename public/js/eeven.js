@@ -54,7 +54,7 @@ var Eeven = new Class({
 	
 	load: function(split){
 	    var split = JSON.decode(split);
-	    console.log("split:");
+        // console.log("split:");
     	this.bills = split['bills'];
 		this.debts = split['debts'];
 		this.refreshBills();
@@ -143,8 +143,6 @@ var Eeven = new Class({
 										 	'html' : "Delete",
 											events:{
 												click: this.deleteRow.bind(this),
-                                                focus:  this.getFocusField.bind(this),
-										        blur:   this.loseFieldFocus.bind(this)
 										        
 											}
 
@@ -326,7 +324,7 @@ var Eeven = new Class({
 	
 	makeBills: function(){
 		this.bills = new Array();
-		console.log(this.bills);		
+        // console.log(this.bills);     
         this.container.getChildren(".row").each(function(row,index){
             if(row.getElement(".amount").get("value").toInt() > 0){
     			this.bills.push({
@@ -339,20 +337,21 @@ var Eeven = new Class({
 	},
 	
 	showResults: function(){
-        // var list = new Element('ul',{'class':'sum'});
-        // Object.each(this.debts,function(payees,ower){
-        //  var li = new Element('li',{'class':'person','html': ower});
-        //  var payeeUL = new Element('ul');
-        //          
-        //  Object.each(payees,function(debt,payee){
-        //      var pLi = new Element('li',{'html': payee + ": $" + debt['amount']});
-        //      pLi.inject(payeeUL);
-        //  });
-        //  
-        //  payeeUL.inject(li);
-        //  li.inject(list);
-        // }.bind(this));
-        // list.inject($("drawer")); 
+        var list = new Element('ul',{'class':'sum'});
+        Object.each(this.debts,function(payees,ower){
+         var li = new Element('li',{'class':'person','html': ower});
+         var payeeUL = new Element('ul');
+                 
+         Object.each(payees,function(debt,payee){
+             var pLi = new Element('li',{'html': payee + ": $" + debt['amount']});
+             pLi.inject(payeeUL);
+         });
+         
+         payeeUL.inject(li);
+         li.inject(list);
+        }.bind(this));
+        $("results").empty();
+        list.inject($("results")); 
 	},
 	
 	sync: function(event){

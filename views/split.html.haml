@@ -1,10 +1,14 @@
 #container
     %img{:src=>'/images/logo.png'}
     #tagline A simple way to split expenses equally
-
+    #intro
+        Eeven is a tool that makes it easy to split expenses equally between people.
+        Simply enter your expenses, have others do the same, and Eeven will figure out who owes who and how much.
+    
     #mainCol
         %input.link{:value=>"http://eeven.envoked.com/#{params[:id]}",:readonly=>"readonly"}
-
+    
+    #results
 
 :javascript
     window.addEvent('domready', function(){
