@@ -48,13 +48,20 @@ var Eeven = new Class({
     	});
              
         this.startUpdate();
-        this.activePoll.startTimer();  
+        this.activePoll.startTimer();
+        this.addFX();  
     	    			
+	},
+	
+	addFX: function(){
+	    $("intro").addEvent("click",function(e){
+	        var scroll = new Fx.Scroll("body");
+	        scroll.toElement($("more"));
+	    });
 	},
 	
 	load: function(split){
 	    var split = JSON.decode(split);
-        // console.log("split:");
     	this.bills = split['bills'];
 		this.debts = split['debts'];
 		this.refreshBills();

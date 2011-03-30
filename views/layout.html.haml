@@ -8,12 +8,14 @@
         %script{:type=>"text/javascript",:src=>"/js/mootools-core-1.3.1.js"}
         %script{:type=>"text/javascript",:src=>"/js/mootools-more-1.3.1.1.js"} 
         %script{:type=>"text/javascript",:src=>"/js/eeven.js"}
-    %body
-        #container
-            =yield
+    %body#body
+        =yield
+        
+        #more
+            HELLO
         #footer
             Crafted with care and character by 
-            %a{:href=>'http://envoked.com'} Adrian Wisernig
-                
+            %a{:href=>'http://envoked.com'} Adrian Wisernig 
+
 
 
