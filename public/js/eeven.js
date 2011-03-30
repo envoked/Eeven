@@ -54,6 +54,11 @@ var Eeven = new Class({
 	},
 	
 	addFX: function(){
+	    var smoothScroll = new Fx.SmoothScroll({
+            links: '.smoothAnchors',
+            wheelStops: false
+        });
+        
 	    $("intro").addEvent("click",function(e){
 	        var scroll = new Fx.Scroll("body");
 	        scroll.toElement($("more"));
@@ -335,7 +340,7 @@ var Eeven = new Class({
         this.container.getChildren(".row").each(function(row,index){
             if(row.getElement(".amount").get("value").toInt() > 0){
     			this.bills.push({
-    				'name': row.getElement(".name").get('value'),
+    				'name': row.getElement(".name").get('value').capitalize(),
     				'amount': row.getElement(".amount").get('value').toInt(), 
     				'memo': row.getElement(".memo").get('value') 	
     			});  
@@ -344,21 +349,24 @@ var Eeven = new Class({
 	},
 	
 	showResults: function(){
-        var list = new Element('ul',{'class':'sum'});
+        var debts = $("debts");
+        debts.empty();
+        
         Object.each(this.debts,function(payees,ower){
-         var li = new Element('li',{'class':'person','html': ower});
-         var payeeUL = new Element('ul');
+            var li = new Element('li',{'class':'person','html': "<h3>" + ower + "</h3> owes"});
+            var payeeUL = new Element('ul');
                  
-         Object.each(payees,function(debt,payee){
-             var pLi = new Element('li',{'html': payee + ": $" + debt['amount']});
-             pLi.inject(payeeUL);
-         });
+            var owesTotal = 0;
+            Object.each(payees,function(debt,payee){
+                var pLi = new Element('li',{'class':'toPay','html': payee + ": $" + debt['amount']});
+                owesTotal += debt['amount'];
+                pLi.inject(payeeUL);
+            });
+            li.appendText(owesTotal);
          
-         payeeUL.inject(li);
-         li.inject(list);
-        }.bind(this));
-        $("results").empty();
-        list.inject($("results")); 
+            payeeUL.inject(li);
+            li.inject(debts);
+        }.bind(this)); 
 	},
 	
 	sync: function(event){

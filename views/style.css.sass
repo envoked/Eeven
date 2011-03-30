@@ -118,7 +118,9 @@ input
     padding: 10px
     width: 500px
     -webkit-box-shadow: inset 0 0 8px $gray
-    -moz-box-shadow: inset 0 0 8px $gray     
+    -moz-box-shadow: inset 0 0 8px $gray
+    cursor: pointer    
+
 .money
     width: 100px
     margin-left: 0px
@@ -159,33 +161,48 @@ button
     
     
 
-ul
-    li
-        margin-left: 10px
 
-.person
-    color: $teal
-    
-    ul
-        border-top: 2px dotted $gray
-        color: $magenta
-    
+        
+#debts
+    >li
+        float: left
+        position: relative
+        width: 340px
+        font-size: 16px
+        margin:
+            right: 10px
+            top: 10px
+        padding: 10px    
+        text-align: center
+        color: $brown
+        background: $yellowTan 
+        +roundedCorner(10px)
+        -webkit-box-shadow: inset 0 0 8px #000
+        -moz-box-shadow: inset 0 0 8px #000
+        
+        h3
+            font-size: 36px
+            line-height: 28px
+            color: $red
+            text-transform: capitalize
+            
+            
+        
+        ul
+            color: #000
+            font-size: 24px
+            margin-top: 18px
+            
+            li
+                &:hover
+                    text-decoration: line-through
+        
 
-.ma-container
-    z-index: 9999
-    color: #000
-    border:
-        color: $gray
-    +roundedCorner(5px)
-    background-color: #fff
-    position: absolute
-    visibility: hidden
-    overflow-y: auto
-    overflow-x: hidden
-    ul
-        list-style: none
-        overflow: hidden
-        width: 100%
+
+
+.name
+    text-transform: capitalize
+
 
 #footer
     color: $mint
