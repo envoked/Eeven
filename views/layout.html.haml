@@ -19,13 +19,18 @@
             .description
                 Eeven makes it easy to track shared expenses and split them equally. It's especially useful for trips or roommate situations where each person pays for different bills. Eeven takes all the bills, adds them up, and figures out who owes who and how much. Simply share the unique link with others. Everything's saved as you enter it.
                 %a.smooth{:href=>'#main'} Ah, I get it.
-            
-        /     .number How
-        /       
-        /     
-        / / #footer
-        / /     Crafted with care and character by 
-        / /     %a{:href=>'http://envoked.com'} Adrian Wisernig  
+
+
+        :javascript 
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-11096734-4']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })(); 
 
 
 
