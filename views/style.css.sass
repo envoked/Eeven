@@ -7,7 +7,7 @@ $gray: #999
 $offWhite: #f2efeb
 $yellowTan: #ffff99
 $red: #b31221
-
+$green: #b9e646
 
 
 
@@ -100,16 +100,27 @@ input
         top: 0px
         left: 0px
         right: 0px
-    // -webkit-box-shadow: inset 0 0 5px $gray
-    // -moz-box-shadow: inset 0 0 5px $gray   
-    // +roundedCorner(5px)
     font-size: 20px
     &:focus
         border:
             color: $brown
         
+ 
+#header
+    clear: both
+    label
+        color: $green
+        text-align: left
+        margin-top: 10px
+        display: inline-block
+        div
+            font-size: 14px
+            font-style: normal
+            color: $red
+            
+    margin-bottom: 18px
+
 #shareLink
-    display: block
     margin: 0 auto
     color: $red
     background: $yellowTan 
@@ -119,12 +130,13 @@ input
         size: 24px
     padding: 10px
     width: 500px
-    -webkit-box-shadow: inset 0 0 8px $gray
-    -moz-box-shadow: inset 0 0 8px $gray
+    -webkit-box-shadow: inset 0 0 8px #000
+    -moz-box-shadow: inset 0 0 8px #000
     text-decoration: none
     z-index: 99
-    clear: both
+    margin-top: 18px
     margin-bottom: 18px
+    float: right    
 .money
     width: 100px
     margin-left: 0px
@@ -214,7 +226,6 @@ button
 .name
     text-transform: capitalize
 
-
 #footer
     color: $mint
     
@@ -225,13 +236,57 @@ button
     color: $offWhite
     margin-bottom: 18px
     cursor: help
-    +opacity(0.5)
+    text-decoration: none
+    +opacity(0.7)
     &:hover
         +opacity(1)
 
 #more
     width: 100%
-    background: white
-    margin-top: 500px
-    height: 200px
+    margin-top: 270px
+    text-align: center
+    padding-top: 18px 
     
+    h3
+        font:
+            size: 24px
+            family: Helvetica
+            weight: bold
+        text-transform: uppercase
+        color: $red
+    
+    .number
+        margin: 0 auto
+        display: block
+        color: $green
+        border: 18px solid
+        border-color: $green
+        +roundedCorner(100px)
+        padding: 10px
+        width: 90px
+        height: 90px
+        font:
+            size: 32px
+            weight: bold
+            family: Helvetica
+        text-transform: uppercase
+        letter-spacing: -2px
+        line-height: 90px
+        -webkit-transform: rotate(-15deg) 
+        -moz-transform: rotate(-15deg)
+
+        
+    
+    .description
+        font:
+            style: italic
+            size: 24px
+        color: $offWhite
+        width: 740px
+        margin: 18px auto
+        cursor: help
+        text-decoration: none
+        
+        a
+            color: $red
+            text-decoration: underline                 

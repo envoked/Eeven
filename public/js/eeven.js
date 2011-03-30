@@ -61,7 +61,8 @@ var Eeven = new Class({
 
         new MooClip(document.id('shareLink'), {
           moviePath: '/js/ZeroClipboard.swf',
-              onCopy: function(){
+              onCopy: function(e){
+               document.id('shareLink').highlight("#b31221");
               }
           });        
 
