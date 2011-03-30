@@ -55,14 +55,16 @@ var Eeven = new Class({
 	
 	addFX: function(){
 	    var smoothScroll = new Fx.SmoothScroll({
-            links: '.smoothAnchors',
+            links: '.smooth',
             wheelStops: false
         });
-        
-	    $("intro").addEvent("click",function(e){
-	        var scroll = new Fx.Scroll("body");
-	        scroll.toElement($("more"));
-	    });
+
+        new MooClip(document.id('shareLink'), {
+          moviePath: '/js/ZeroClipboard.swf',
+              onCopy: function(){
+              }
+          });        
+
 	},
 	
 	load: function(split){
@@ -353,16 +355,17 @@ var Eeven = new Class({
         debts.empty();
         
         Object.each(this.debts,function(payees,ower){
-            var li = new Element('li',{'class':'person','html': "<h3>" + ower + "</h3> owes"});
+            var li = new Element('li',{'class':'person'});
             var payeeUL = new Element('ul');
                  
-            var owesTotal = 0;
+            var totalOwed = 0; // total amount this person owes
             Object.each(payees,function(debt,payee){
                 var pLi = new Element('li',{'class':'toPay','html': payee + ": $" + debt['amount']});
-                owesTotal += debt['amount'];
+                totalOwed += debt['amount'];
                 pLi.inject(payeeUL);
             });
-            li.appendText(owesTotal);
+            
+            li.set("html","<h2>" + ower + "</h2> owes <h3>$" + totalOwed + "</h3>");
          
             payeeUL.inject(li);
             li.inject(debts);

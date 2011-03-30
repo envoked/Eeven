@@ -12,7 +12,8 @@ gem 'dm-types'
 gem 'haml'
 gem 'json_pure'
 gem 'dalli'
-gem 'sinatra-respond_to' 
+gem 'sinatra-respond_to'
+gem 'RedCloth' 
 
 group :test do
   gem 'rspec', :require => 'spec'

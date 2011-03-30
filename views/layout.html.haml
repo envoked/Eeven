@@ -6,15 +6,19 @@
         %link{:href => '/css/reset.css', :rel => 'stylesheet', :type => 'text/css'}
         %link{:href => '/stylesheet.css', :rel => 'stylesheet', :type => 'text/css'}
         %script{:type=>"text/javascript",:src=>"/js/mootools-core-1.3.1.js"}
-        %script{:type=>"text/javascript",:src=>"/js/mootools-more-1.3.1.1.js"} 
+        %script{:type=>"text/javascript",:src=>"/js/mootools-more-1.3.1.1.js"}
+        %script{:type=>"text/javascript",:src=>"/js/mooclip.js"}   
         %script{:type=>"text/javascript",:src=>"/js/eeven.js"}
     %body#body
         =yield
         
         #more
-            %a.smoothAnchors{:name=>'more'}
+            %a{:name=>'more'}
+            :textile
+                Say you went on a trip
+      
             
-            %a{:href=>'#main'} Ahh I get it
+            %a.smooth{:href=>'#main'} Ahh I get it
         #footer
             Crafted with care and character by 
             %a{:href=>'http://envoked.com'} Adrian Wisernig 
