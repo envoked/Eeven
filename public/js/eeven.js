@@ -28,7 +28,7 @@ var Eeven = new Class({
     	this.poll = new Request.JSON({
     		url: '/split/' + this.splitId,
     		method: 'get',
-    		delay: 1000,
+    		delay: 3000,
     		initialDelay: 2000,
     		
     		onComplete:function(split){
@@ -43,8 +43,8 @@ var Eeven = new Class({
     	this.activePoll = new Request({
     		url: '/split/isActive/' + this.splitId,
     		method: 'get',
-    		delay: 10000,
-    		initialDelay: 2000,
+    		delay: 15000,
+    		initialDelay: 1000,
     		onComplete: this.setSync
     	});
              
