@@ -51,7 +51,7 @@ class Eeven < Sinatra::Base
 
   get '/split/isActive/:id' do
     key = "eeven:#{params[:id]}"
-    active = MEMCACHE.get(key) != request.ip
+    active = MEMCACHE.get(key) == (nil || request.ip)
     MEMCACHE.set(key, request.ip, 60)
     return active.to_s
 

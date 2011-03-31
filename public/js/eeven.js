@@ -2,6 +2,7 @@
   name :    Eeven
   author :  Adrian Wisernig
   description: The main class for the Eeven application. To use simply attach it to an element
+  
 */
 var Eeven = new Class({
     Binds:["lastListener","setSync"],
@@ -129,7 +130,7 @@ var Eeven = new Class({
 											 	'type': 'text',
 											    events:{
 											        change: this.sync.bind(this),
-											        focus:  this.getFocusField.bind(this),
+											        focus:  this.setFocusField.bind(this),
 											        blur:   this.loseFieldFocus.bind(this)
 											        
 											    }	
@@ -138,7 +139,7 @@ var Eeven = new Class({
 											 	'type': 'text', 
 											    events:{
 											        change: this.sync.bind(this),
-                                                    focus:  this.getFocusField.bind(this),
+                                                    focus:  this.setFocusField.bind(this),
 											        blur:   this.loseFieldFocus.bind(this)
 											         
 											    } 
@@ -147,7 +148,7 @@ var Eeven = new Class({
 											 	'type': 'text',
 											    events:{
 											        change: this.sync.bind(this),
-                                                    focus:  this.getFocusField.bind(this),
+                                                    focus:  this.setFocusField.bind(this),
 											        blur:   this.loseFieldFocus.bind(this)
 											    } 
 						 	
@@ -216,6 +217,10 @@ var Eeven = new Class({
 		
 	},
 	
+	
+	/*
+	    Remove a row and propagate the change to other clients
+	*/
 	deleteRow:function(event){
 	    var row = event.target.getParent(".row");
 	    
@@ -230,10 +235,18 @@ var Eeven = new Class({
 		this.save();
 		this.addLastListener();
 	},
+    
 
+    /*
+      Process all the bills and calculate the debts
+      
+    
+    */
 	calculate: function(){
 		this.makeBills();
 		this.debts = {};
+		
+		
 		//find all the unique people
 		var names = this.bills.map(function(bill,index)
 			{return bill['name'];
@@ -253,7 +266,7 @@ var Eeven = new Class({
 			}.bind(this));// this is eevennn			
 		}.bind(this));// this is eeven as well
 		
-		
+		//If I owe you x and you owe me y then I owe you x-y 
 		Object.each(this.debts,function(payees,ower){
 			Object.each(payees,function(debt,payee){
 				if(debt['amount'] > 0 &&
@@ -281,7 +294,7 @@ var Eeven = new Class({
 		
 	},
 	
-	getFocusField: function(event){
+	setFocusField: function(event){
 	    this.focusedField = event.target;
 	},
 	
