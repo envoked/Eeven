@@ -87,6 +87,15 @@ var Eeven = new Class({
 	    this.isActive = (bool == "true");
         this.isActive ? this.poll.startTimer() : this.poll.stopTimer();
 	},
+ 
+   
+	sync: function(event){
+	    row = event.target.getParent(".row");
+	    if(row.getElement(".amount").get("value") >= 0){
+	        this.calculate();
+	        this.save();
+	    }
+	},
 	
 	/*
 	  Start Autosync
@@ -251,6 +260,8 @@ var Eeven = new Class({
 		var names = this.bills.map(function(bill,index)
 			{return bill['name'];
 			}).unique();
+			
+			
 		this.bills.each(function(bill,index){
 			var eachOwes = Number.from(bill['amount'] / names.length).round() || 0;
 			names.each(function(ower,index){
@@ -354,7 +365,7 @@ var Eeven = new Class({
 		this.bills = new Array();
         // console.log(this.bills);     
         this.container.getChildren(".row").each(function(row,index){
-            if(row.getElement(".amount").get("value").toInt() > 0){
+            if(row.getElement(".amount").get("value").toInt() >= 0){
     			this.bills.push({
     				'name': row.getElement(".name").get('value').capitalize(),
     				'amount': row.getElement(".amount").get('value').toInt(), 
@@ -364,6 +375,8 @@ var Eeven = new Class({
         }.bind(this));
 	},
 	
+	
+	//show the debts
 	showResults: function(){
         var debts = $("debts");
         debts.empty();
@@ -384,14 +397,6 @@ var Eeven = new Class({
             payeeUL.inject(li);
             li.inject(debts);
         }.bind(this)); 
-	},
-	
-	sync: function(event){
-	    row = event.target.getParent(".row");
-	    if(row.getElement(".amount").get("value") >= 0){
-	        this.calculate();
-	        this.save();
-	    }
 	}
   
 });
