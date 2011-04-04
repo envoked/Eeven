@@ -365,7 +365,8 @@ var Eeven = new Class({
 		this.bills = new Array();
         // console.log(this.bills);     
         this.container.getChildren(".row").each(function(row,index){
-            if(row.getElement(".amount").get("value").toInt() >= 0){
+            if(row.getElement(".name") != "" && 
+               row.getElement(".amount").get("value").toInt() >= 0){
     			this.bills.push({
     				'name': row.getElement(".name").get('value').capitalize(),
     				'amount': row.getElement(".amount").get('value').toInt(), 
