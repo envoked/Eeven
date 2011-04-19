@@ -23,8 +23,9 @@ var Eeven = new Class({
 		this.isActive = true;
 		this.focusedField = undefined;
     	
-    	//create the Polls
+    	//create the ajax polls
     	 
+    	
     	this.poll = new Request.JSON({
     		url: '/split/' + this.splitId,
     		method: 'get',
@@ -39,21 +40,27 @@ var Eeven = new Class({
         			this.showResults();   
     		    }
     		}.bind(this)
-    	});      
+    	});
+    	
+    	      
     	this.activePoll = new Request({
     		url: '/split/isActive/' + this.splitId,
     		method: 'get',
-    		delay: 15000,
+    		delay: 5000 ,
     		initialDelay: 1000,
     		onComplete: this.setSync
     	});
              
+        
+        
         this.startUpdate();
         this.activePoll.startTimer();
         this.addFX();  
     	    			
 	},
 	
+	
+	//add scrolling to a tags and ability to copy to clipboard
 	addFX: function(){
 	    var smoothScroll = new Fx.SmoothScroll({
             links: '.smooth',
@@ -69,6 +76,7 @@ var Eeven = new Class({
 
 	},
 	
+	//load a split based on a json object passed in
 	load: function(split){
 	    var split = JSON.decode(split);
     	this.bills = split['bills'];
@@ -89,6 +97,7 @@ var Eeven = new Class({
 	},
  
    
+	
 	sync: function(event){
 	    row = event.target.getParent(".row");
 	    if(row.getElement(".amount").get("value") >= 0){
@@ -189,7 +198,7 @@ var Eeven = new Class({
 	},
 	
 	/*
-	    add a listener on the last row
+	    add a listener on the last row to make sure there's always a blank row at the bottom
 	
 	*/
 
@@ -256,12 +265,14 @@ var Eeven = new Class({
 		this.debts = {};
 		
 		
-		//find all the unique people
+		//find all the unique people involved
 		var names = this.bills.map(function(bill,index)
 			{return bill['name'];
 			}).unique();
 			
 			
+		
+		//take all the bills and organize them by debtor
 		this.bills.each(function(bill,index){
 			var eachOwes = Number.from(bill['amount'] / names.length).round() || 0;
 			names.each(function(ower,index){
@@ -305,16 +316,18 @@ var Eeven = new Class({
 		
 	},
 	
+	// set the field which is focused so it can't be overriden by other clients
 	setFocusField: function(event){
 	    this.focusedField = event.target;
 	},
 	
+	//unset the focused field
 	loseFieldFocus: function(event){
 	    this.focusedField = undefined;
 	},
 	
 	
-	
+	//save the current split
 	save: function(){
 	   	var bill = {'id' : this.splitId,
 					'bills': this.bills,
@@ -331,7 +344,7 @@ var Eeven = new Class({
 		request.send();		
 	},
 	
-	
+	// refresh the visual table of bills to reflect changes done by other clients
 	refreshBills: function(){
         this.bills.each(function(bill,index){
                     row = this.container.getChildren(".row")[index]; // bad design
@@ -361,6 +374,7 @@ var Eeven = new Class({
 	},
 	
 	
+	//create the bills javascript object -- sure would be nice if binding was simple
 	makeBills: function(){
 		this.bills = new Array();
         // console.log(this.bills);     

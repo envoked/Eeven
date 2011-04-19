@@ -7,3 +7,13 @@ Eeven is an easy way to evenly split expenses. It's particularly useful for trip
 h2. How?
 
 Eeven uses the "Mootools":http://mootools.net javascript framework with "sinatra":http://sinatraerb.com coordinating the front end with the "Memcached":http://memcached.org/ & "Redis":http://redis.io datastores.
+
+h2. Why is it technically interesting?
+
+Since HTTP isn't inherently event driven, making it difficult to do realtime syncing between clients. An ajax poll is commonly used to get around this. The client side applications polls the server at a given interval asking it if any other clients are connected and updating itself accordingly. 
+
+Another problem arises when multiple people are editing the same data value. In the case of eeven, the last person editing the field has priority over all other clients. A better way would be to track the focused field on the server and then disable it on all other clients similiar to Google Docs.
+
+
+
+The main javascript file can be found at public/js/eeven.js
