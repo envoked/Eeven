@@ -2,7 +2,7 @@ h1. Eeven
 
 h2. What?
 
-Eeven is an easy way to evenly split expenses. It's particularly useful for trips and roommate situations where different people are covering different bills.
+"Eeven":http://eeven.envoked.com is an easy way to evenly split expenses. It's particularly useful for trips and roommate situations where different people are covering different bills.
 
 h2. How?
 
