@@ -4,6 +4,12 @@ GEM
     RedCloth (4.2.7)
     addressable (2.2.4)
     bcrypt-ruby (2.1.4)
+    capistrano (2.8.0)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
     dalli (1.0.3)
     data_mapper (1.1.0)
       dm-aggregates (= 1.1.0)
@@ -47,8 +53,16 @@ GEM
       dm-core (~> 1.1.0)
     fastercsv (1.5.4)
     haml (3.0.25)
+    highline (1.6.2)
     json (1.4.6)
     json_pure (1.5.1)
+    net-scp (1.0.4)
+      net-ssh (>= 1.99.1)
+    net-sftp (2.0.5)
+      net-ssh (>= 2.0.9)
+    net-ssh (2.2.1)
+    net-ssh-gateway (1.1.0)
+      net-ssh (>= 1.99.1)
     rack (1.2.2)
     rack-test (0.5.7)
       rack (>= 1.0)
@@ -76,6 +90,7 @@ PLATFORMS
 
 DEPENDENCIES
   RedCloth
+  capistrano
   dalli
   data_mapper
   dm-aggregates

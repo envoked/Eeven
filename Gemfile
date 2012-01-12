@@ -13,7 +13,8 @@ gem 'haml'
 gem 'json_pure'
 gem 'dalli'
 gem 'sinatra-respond_to'
-gem 'RedCloth' 
+gem 'RedCloth'
+gem 'capistrano' 
 
 group :test do
   gem 'rspec', :require => 'spec'
